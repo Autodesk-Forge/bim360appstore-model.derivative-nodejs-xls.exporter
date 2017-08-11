@@ -29,6 +29,8 @@ $(document).ready(function () {
 });
 
 var haveBIM360Hub = false;
+var previousId = 0;
+
 
 function prepareDataManagementTree() {
   $('#dataManagementHubs').jstree({
@@ -94,7 +96,9 @@ function prepareDataManagementTree() {
     if (data != null && data.node != null && data.node.type == 'versions') {
       if (data.node.id === 'not_available') { alert('No viewable available for this version'); return; }
       var parent_node = $('#dataManagementHubs').jstree(true).get_node(data.node.parent);
+      if (previousId == data.node.id) return;
       launchViewer(data.node.id, parent_node.text, data.node.original.fileType);
+      previousId = data.node.id;
       $.notify("loading... " + parent_node.text, { className: "info", position:"bottom right" });
     }
   });;
