@@ -89,7 +89,7 @@ function prepareDataManagementTree() {
       }
     },
     "plugins": 
-      ["types", "state", "sort", "contextmenu"]
+      ["types", "state", "sort"]
   }).bind("activate_node.jstree", function (evt, data) {
     if (data != null && data.node != null && data.node.type == 'versions') {
       if (data.node.id === 'not_available') { alert('No viewable available for this version'); return; }
