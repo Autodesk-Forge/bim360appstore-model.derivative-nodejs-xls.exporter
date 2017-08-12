@@ -29,8 +29,7 @@ $(document).ready(function () {
 });
 
 var haveBIM360Hub = false;
-var previousId = 0;
-
+var previousUrn = 0;
 
 function prepareDataManagementTree() {
   $('#dataManagementHubs').jstree({
@@ -93,13 +92,16 @@ function prepareDataManagementTree() {
     "plugins": 
       ["types", "state", "sort"]
   }).bind("activate_node.jstree", function (evt, data) {
-    if (data != null && data.node != null && data.node.type == 'versions') {
+    if (data && data.node && ( data.node.type == 'items' || data.node.type == 'versions')) {
       if (data.node.id === 'not_available') { alert('No viewable available for this version'); return; }
-      var parent_node = $('#dataManagementHubs').jstree(true).get_node(data.node.parent);
-      if (previousId == data.node.id) return;
-      launchViewer(data.node.id, parent_node.text, data.node.original.fileType);
-      previousId = data.node.id;
-      $.notify("loading... " + parent_node.text, { className: "info", position:"bottom right" });
+
+      var urn = (data.node.type == "versions") ? data.node.id : data.node.children[0];
+      var filename = (data.node.type == "versions") ? $('#dataManagementHubs').jstree(true).get_node(data.node.parent).text : data.node.text;
+
+      if (previousUrn == urn) return;
+      launchViewer(urn, filename, data.node.original.fileType);
+      previousUrn = urn;
+      $.notify("loading... " + filename, { className: "info", position:"bottom right" });
     }
   });;
 }
