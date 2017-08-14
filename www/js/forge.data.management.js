@@ -49,9 +49,10 @@ function prepareDataManagementTree() {
               haveBIM360Hub = true;
           });
           if (!haveBIM360Hub) {
-            $.getJSON("/api/forge/clientID", function (data) {
-              $("#ClientID").val(data.ForgeClientId);
-              $("#BIMconfig").show();
+            $.getJSON("/api/forge/clientID", function (res) {
+              $("#ClientID").val(res.ForgeClientId);
+              $("#BIMconfig").modal();
+              haveBIM360Hub = true;
             });
           }
         }        
