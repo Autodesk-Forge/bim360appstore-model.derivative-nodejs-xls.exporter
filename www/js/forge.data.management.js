@@ -18,6 +18,7 @@
 
 $(document).ready(function () {
   $('#refreshAutodeskTree').hide();
+  new Clipboard(".input-group-addon");
   if (getForgeToken() != '') {
     prepareDataManagementTree();
     $('#refreshAutodeskTree').show();
@@ -51,7 +52,8 @@ function prepareDataManagementTree() {
           if (!haveBIM360Hub) {
             $.getJSON("/api/forge/clientID", function (res) {
               $("#ClientID").val(res.ForgeClientId);
-              $("#BIMconfig").modal();
+              $('#provisionAccountModal').modal();
+              $("#BIMconfig").show();
               haveBIM360Hub = true;
             });
           }
