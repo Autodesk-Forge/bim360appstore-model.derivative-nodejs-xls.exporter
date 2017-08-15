@@ -95,14 +95,19 @@ function prepareDataManagementTree() {
     "plugins": 
       ["types", "state", "sort"]
   }).bind("activate_node.jstree", function (evt, data) {
-    if (data && data.node && ( data.node.type == 'items' || data.node.type == 'versions')) {
+    if (!data || !data.node) return;
+    if (data.node.type == 'items')
+      data.node = $('#dataManagementHubs').jstree(true).get_node(data.node.children[0]);
+
+    if (data.node.type == 'versions') {
       if (data.node.id === 'not_available') { alert('No viewable available for this version'); return; }
 
-      var urn = (data.node.type == "versions") ? data.node.id : data.node.children[0];
-      var filename = (data.node.type == "versions") ? $('#dataManagementHubs').jstree(true).get_node(data.node.parent).text : data.node.text;
+      var urn = data.node.id;
+      var filename = $('#dataManagementHubs').jstree(true).get_node(data.node.parent).text;
+      var fileType = data.node.original.fileType;
 
-      if (previousUrn == urn) return;
-      launchViewer(urn, filename, data.node.original.fileType);
+      if (fileType == null || urn == null || previousUrn == urn) return;
+      launchViewer(urn, filename, fileType);
       previousUrn = urn;
       $.notify("loading... " + filename, { className: "info", position:"bottom right" });
     }
