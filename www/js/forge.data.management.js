@@ -73,7 +73,7 @@ function prepareDataManagementTree() {
       'personalHub': {
         'icon': '/img/a360hub.png'
       },
-      'bim360Hubs': {
+      'bim360hubs': {
         'icon': '/img/bim360hub.png'
       },
       'bim360projects': {
