@@ -126,7 +126,7 @@ function getHubs(tokenSession, res) {
             hubType = "personalHub";
             break;
           case "hubs:autodesk.bim360:Account":
-            hubType = "bim360Hubs";
+            hubType = "bim360hubs";
             break;
         }
 
