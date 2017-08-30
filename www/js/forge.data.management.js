@@ -39,7 +39,8 @@ function prepareDataManagementTree() {
       'data': {
         "url": '/dm/getTreeNode',
         "dataType": "json",
-        'multiple': false,
+        "multiple": false,
+        "cache": false,
         "data": function (node) {
           $('#dataManagementHubs').jstree(true).toggle_node(node);
           return {"id": node.id};
