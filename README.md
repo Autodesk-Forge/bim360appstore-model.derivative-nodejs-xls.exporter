@@ -81,7 +81,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
 
 ### Thumbnail
 
-![thumbnail](/BIM360 data to Excel.png)
+![thumbnail](/BIM360DataToExcel.png)
 
 
 # License
