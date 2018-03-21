@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "body-parser": "*",
-    "bootstrap": "*",
-    "cookie-parser": "*",
-    "express": "*",
-    "express-session": "*",
+    "body-parser": "1.17.2",
+    "bootstrap": "3.3.7",
+    "cookie-parser": "1.4.3",
+    "express": "4.15.3",
+    "express-session": "1.15.3",
     "forge-apis": "^0.3.0",
-    "jquery": "*",
-    "jstree": "*",
-    "moment": "*",
+    "jquery": "3.2.1",
+    "jstree": "3.3.4",
+    "moment": "2.18.1",
     "request": "^2.81.0"
   },
   "repository": {
@@ -23,6 +23,6 @@
     "dev": "node start.js",
     "nodemon": "nodemon start.js --ignore www/"
   },
-  "author": "Augusto Goncalves (Forge Partner Development)",
+  "author": "Michale Beale (Forge Partner Development)",
   "license": "MIT"
 }
