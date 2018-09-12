@@ -4,7 +4,7 @@
 [![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
 [![Viewer](https://img.shields.io/badge/Viewer-v2.17-green.svg)](http://developer.autodesk.com/)
 
-![thumbnail](video-exportXLS.gif)
+![thumbnail](/thumbnail.gif)
 
 # Description
 
