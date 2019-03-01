@@ -31,7 +31,8 @@ var documentId;
 function launchViewer(urn, name, ftype) {
   options = {
     env: 'AutodeskProduction',
-    getAccessToken: getForgeToken
+    getAccessToken: getForgeToken,
+    api: 'derivativeV2' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? '_EU' : '')
   };
   fileName = name;
   fileType = ftype;
