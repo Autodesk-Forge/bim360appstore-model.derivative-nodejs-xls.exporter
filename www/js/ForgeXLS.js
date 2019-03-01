@@ -23,7 +23,9 @@ var ForgeXLS = {
   Utility: {
     Constants: {
       BASE_URL: 'https://developer.api.autodesk.com',
-      MODEL_DERIVATIVE_V2: '/modelderivative/v2/designdata/'
+      MODEL_DERIVATIVE_V2: function (urn) {
+        return '/modelderivative/v2/' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? 'regions/eu' : '') + '/designdata/'
+      }
     },
 
     forgeGetRequest: function (url, token, callback) {
@@ -35,7 +37,7 @@ var ForgeXLS = {
         success: function (response) {
           if (response.result && response.result === 'success') {
             setTimeout(function () {
-              $.notify('Please wait. Retrieving meta-data for ' + fileName, { className: "info", position:"bottom right" });
+              $.notify('Please wait. Retrieving meta-data for ' + fileName, { className: "info", position: "bottom right" });
               ForgeXLS.Utility.forgeGetRequest(url, token, callback);
             }, 3000);
             return;
@@ -47,21 +49,21 @@ var ForgeXLS = {
     },
     getMetadata: function (urn, token, callback) {
       console.log('Downloading metadata...');
-      this.forgeGetRequest(this.Constants.BASE_URL + this.Constants.MODEL_DERIVATIVE_V2 + urn + '/metadata', token, callback);
+      this.forgeGetRequest(this.Constants.BASE_URL + this.Constants.MODEL_DERIVATIVE_V2(urn) + urn + '/metadata', token, callback);
     },
 
     getHierarchy: function (urn, guid, token, callback) {
       console.log('Downloading hierarchy...');
-      this.forgeGetRequest(this.Constants.BASE_URL + this.Constants.MODEL_DERIVATIVE_V2 + urn + '/metadata/' + guid, token, callback);
+      this.forgeGetRequest(this.Constants.BASE_URL + this.Constants.MODEL_DERIVATIVE_V2(urn) + urn + '/metadata/' + guid, token, callback);
     },
 
     getProperties: function (urn, guid, token, callback) {
       console.log('Downloading properties...');
-      this.forgeGetRequest(this.Constants.BASE_URL + this.Constants.MODEL_DERIVATIVE_V2 + urn + '/metadata/' + guid + '/properties', token, callback);
+      this.forgeGetRequest(this.Constants.BASE_URL + this.Constants.MODEL_DERIVATIVE_V2(urn) + urn + '/metadata/' + guid + '/properties', token, callback);
     }
   },
 
-  downloadXLSX: function (urn, fileName, token, status, fileType) {    
+  downloadXLSX: function (urn, fileName, token, status, fileType) {
     if (fileType.indexOf('rvt') == -1) {
       if (status) status(true, 'Not a Revit file. Only Revit files are supported, at the moment. Aborting conversion.');
       return;
@@ -77,15 +79,15 @@ var ForgeXLS = {
 
       var wb = new Workbook();
       jQuery.each(tables, function (name, table) {
-        if (name.indexOf('<')==-1) { // skip tables starting with <
+        if (name.indexOf('<') == -1) { // skip tables starting with <
           var ws = ForgeXLS.sheetFromTable(table);
           wb.SheetNames.push(name);
           wb.Sheets[name] = ws;
         }
       });
 
-      var wbout = XLSX.write(wb, {bookType: 'xlsx', bookSST: true, type: 'binary'});
-      saveAs(new Blob([s2ab(wbout)], {type: "application/octet-stream"}), fileName);
+      var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+      saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), fileName);
 
       if (status) status(true, 'Downloading...');
     })
@@ -93,7 +95,7 @@ var ForgeXLS = {
 
   sheetFromTable: function (table) {
     var ws = {};
-    var range = {s: {c: 10000000, r: 10000000}, e: {c: 0, r: 0}};
+    var range = { s: { c: 10000000, r: 10000000 }, e: { c: 0, r: 0 } };
 
     var allProperties = [];
     table.forEach(function (object) {
@@ -119,8 +121,8 @@ var ForgeXLS = {
     var R = 0;
     var C = 0;
     for (; C != propsNames.length; ++C) {
-      var cell_ref = XLSX.utils.encode_cell({c: C, r: R});
-      ws[cell_ref] = {v: propsNames[C], t: 's'};
+      var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
+      ws[cell_ref] = { v: propsNames[C], t: 's' };
     }
     R++;
 
@@ -131,9 +133,9 @@ var ForgeXLS = {
         if (range.s.c > C) range.s.c = 0;
         if (range.e.r < R) range.e.r = R;
         if (range.e.c < C) range.e.c = C;
-        var cell = {v: table[index][propName]};
+        var cell = { v: table[index][propName] };
         if (cell.v == null) return;
-        var cell_ref = XLSX.utils.encode_cell({c: C, r: R});
+        var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
 
         if (typeof cell.v === 'number') cell.t = 'n';
         else if (typeof cell.v === 'boolean') cell.t = 'b';
@@ -187,7 +189,7 @@ var ForgeXLS = {
 
   getAllElementsOnCategory: function (ids, category) {
     category.forEach(function (item) {
-      if (typeof(item.objects) === 'undefined') {
+      if (typeof (item.objects) === 'undefined') {
         if (!ids.indexOf(item.objectid) >= 0)
           ids.push(item.objectid);
       }
