@@ -20,12 +20,7 @@
 // This script file is based on the tutorial:
 // https://developer.autodesk.com/en/docs/viewer/v2/tutorials/basic-application/
 
-// var viewerApp;
-// var fileName;
-// var fileType;
-// var options = {};
-// var token = '';
-// var documentId;
+
 
 
 // V7  ---  START
