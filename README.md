@@ -24,6 +24,8 @@ To access data stored in BIM 360 Docs through API, you need to manually “provi
 
 [https://docs.b360.autodesk.com](https://docs.b360.autodesk.com)
 
+![thumbnail](/custom4.gif)
+
 If Custom Integration tab is not visible: [Click here for the steps](https://fieldofviewblog.wordpress.com/2017/08/18/no-custom-integrations-tab/comment-page-1)
 
 
