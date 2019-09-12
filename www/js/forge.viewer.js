@@ -20,49 +20,40 @@
 // This script file is based on the tutorial:
 // https://developer.autodesk.com/en/docs/viewer/v2/tutorials/basic-application/
 
-var viewerApp;
-var fileName;
-var fileType;
-var options = {};
-var token = '';
-var documentId;
 
 
+
+// V7  ---  START
 function launchViewer(urn, name, ftype) {
-  options = {
-    env: 'AutodeskProduction',
-    getAccessToken: getForgeToken,
-    api: 'derivativeV2' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? '_EU' : '')
-  };
-  fileName = name;
-  fileType = ftype;
-  documentId = urn;
-  Autodesk.Viewing.Initializer(options, function onInitialized() {
-    viewerApp = new Autodesk.Viewing.ViewingApplication('forgeViewer');
-    viewerApp.registerViewer(viewerApp.k3D, Autodesk.Viewing.Private.GuiViewer3D);
-    viewerApp.loadDocument("urn:" + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
-  });
-}
-
 var viewer;
-
-function onDocumentLoadSuccess(doc) {
-
-  // We could still make use of Document.getSubItemsWithProperties()
-  // However, when using a ViewingApplication, we have access to the **bubble** attribute,
-  // which references the root node of a graph that wraps each object from the Manifest JSON.
-  var viewables = viewerApp.bubble.search({ 'type': 'geometry' });
-  if (viewables.length === 0) {
-    console.error('Document contains no viewables.');
-    return;
-  }
-
-  // Choose any of the avialble viewables
-  viewerApp.selectItem(viewables[0].data, onItemLoadSuccess, onItemLoadFail);
-
+var options = {
+   env: 'AutodeskProduction',
+   api: 'derivativeV2',  // for models uploaded to EMEA change this option to 'derivativeV2_EU'
+   getAccessToken: getForgeToken
+};
+Autodesk.Viewing.Initializer(options, function() {
+   var htmlDiv = document.getElementById('forgeViewer');
+   viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv);
+   var startedCode = viewer.start();
+   if (startedCode > 0) {
+       console.error('Failed to create a Viewer: WebGL not supported.');
+       return;
+   }
+   console.log('Initialization complete, loading a model next...');
+   var htmlDiv = document.getElementById('forgeViewer');
+   viewer = new Autodesk.Viewing.GuiViewer3D(htmlDiv);
+   viewer.start();
+   var documentId = 'urn:'+urn;
+   Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
+   function onDocumentLoadSuccess(viewerDocument) {
+       var defaultModel = viewerDocument.getRoot().getDefaultGeometry();
+       viewer.loadDocumentNode(viewerDocument, defaultModel);
+   }
+   function onDocumentLoadFailure() {
+       console.error('Failed fetching Forge manifest');
+   }
+});
 }
-
-function onDocumentLoadFailure(viewerErrorCode) {}
 
 function onItemLoadSuccess(_viewer, item) {
   viewer = _viewer;
@@ -81,3 +72,4 @@ function getForgeToken() {
   });
   return token;
 }
+// V7 --- END

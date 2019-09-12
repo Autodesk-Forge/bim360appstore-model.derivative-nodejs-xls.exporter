@@ -12,9 +12,22 @@ This sample application demonstrates how to extract Revit data on your BIM360 ac
 
 ### Live version
 
+If you are using BIM for the first time make sure you have a BIM360 account and authorization access grant provided by the administrator. 
+
+[https://b2.autodesk.com](https://b2.autodesk.com/)
+
 [https://bim360xls.autodesk.io](https://bim360xls.autodesk.io/)
 
 Video: [Youtube](https://youtu.be/800d2xmQl0s)
+
+To access data stored in BIM 360 Docs through API, you need to manually “provision” your app first. This is done in “Account Admin” page >> “Settings” tab >> “Custom Integrations” >> “Add Custom Integration”.
+
+[https://docs.b360.autodesk.com](https://docs.b360.autodesk.com)
+
+![thumbnail](/custom4.gif)
+
+If Custom Integration tab is not visible: [Click here for the steps](https://fieldofviewblog.wordpress.com/2017/08/18/no-custom-integrations-tab/comment-page-1)
+
 
 # Setup
 
@@ -44,9 +57,12 @@ Windows (use <b>Node.js command line</b> from Start menu)
     set FORGE_CLIENT_SECRET=<<YOUR FORGE CLIENT SECRET>>
     npm run dev
 
+Remember to set the FORGE_CLIENT_ID and FORGE_CLIENT_SECRET in app.json and config.js file in case the above command do not reflect changes in both of the files.
 Open the browser: [http://localhost:3000](http://localhost:3000).
 
-**Important:** do not use **npm start** locally, this is intended for PRODUCTION only with HTTPS (SSL) secure cookies.
+**Important:** 
+1.Do not use **npm start** locally, this is intended for PRODUCTION only with HTTPS (SSL) secure cookies.
+2.Run  'npm run dev' in node.js command line.
 
 ### Deploy on Heroku
 
