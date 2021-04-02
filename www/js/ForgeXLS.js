@@ -24,7 +24,7 @@ var ForgeXLS = {
     Constants: {
       BASE_URL: 'https://developer.api.autodesk.com',
       MODEL_DERIVATIVE_V2: function (urn) {
-        return '/modelderivative/v2/' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? 'regions/eu' : '') + '/designdata/'
+        return '/modelderivative/v2' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? 'regions/eu' : '') + '/designdata/'
       }
     },
 
