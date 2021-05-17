@@ -46,74 +46,78 @@ router.get('/dm/getTreeNode', function (req, res) {
 });
 
 function getFolders(hubId, projectId, tokenSession, res) {
-        // if the caller is a project, then show folders
+  // if the caller is a project, then show folders
 
-        var projects = new forgeSDK.ProjectsApi();
-        projects.getProjectTopFolders(hubId, projectId, tokenSession.getInternalOAuth(), tokenSession.getInternalCredentials())
-          .then(function (topFolders) {
-            var folderItemsForTree = [];
-            topFolders.body.data.forEach(function (item) {
-              folderItemsForTree.push(prepareItemForTree(
-                item.links.self.href,
-                item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName,
-                item.type,
-                true
-              ))
-            });
-            res.json(folderItemsForTree);
-          })
-          .catch(function (error) {
-            console.log(error);
-            res.status(500).end();
-          });
+  var projects = new forgeSDK.ProjectsApi();
+  projects.getProjectTopFolders(hubId, projectId, tokenSession.getInternalOAuth(), tokenSession.getInternalCredentials())
+    .then(function (topFolders) {
+      var folderItemsForTree = [];
+      topFolders.body.data.forEach(function (item) {
+        folderItemsForTree.push(prepareItemForTree(
+          item.links.self.href,
+          item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName,
+          item.type,
+          true
+        ))
+      });
+      res.json(folderItemsForTree);
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.status(500).end();
+    });
 }
 
 
 function getProjects(hubId, tokenSession, res) {
-        // if the caller is a hub, then show projects
-        var projects = new forgeSDK.ProjectsApi();
+  // if the caller is a hub, then show projects
+  var projects = new forgeSDK.ProjectsApi();
 
-        //console.log(tokenSession.getInternalOAuth());
-        //console.log(tokenSession.getInternalCredentials());
+  //console.log(tokenSession.getInternalOAuth());
+  //console.log(tokenSession.getInternalCredentials());
 
-        projects.getHubProjects(hubId, {},
-          tokenSession.getInternalOAuth(), tokenSession.getInternalCredentials())
-        .then(function (projects) {
-          var projectsForTree = [];
-          projects.body.data.forEach(function (project) {
-            var projectType = 'projects';
-            switch (project.attributes.extension.type) {
-              case 'projects:autodesk.core:Project':
-                projectType = 'a360projects';
-                break;
-              case 'projects:autodesk.bim360:Project':
-                projectType = 'bim360projects';
-                break;
+  projects.getHubProjects(hubId, {},
+    tokenSession.getInternalOAuth(), tokenSession.getInternalCredentials())
+    .then(function (projects) {
+      var projectsForTree = [];
+      projects.body.data.forEach(function (project) {
+        var projectType = 'projects';
+        switch (project.attributes.extension.type) {
+          case 'projects:autodesk.core:Project':
+            projectType = 'a360projects';
+            break;
+          case 'projects:autodesk.bim360:Project':
+            if (project.attributes.extension.data.projectType == 'ACC') {
+              projectType = 'accprojects';
+            } else {
+              projectType = 'bim360projects';
             }
+            break;
+        }
 
-            projectsForTree.push(prepareItemForTree(
-              project.links.self.href,
-              project.attributes.name,
-              projectType,
-              true
-            ));
-          });
-          res.json(projectsForTree);
-        })
-        .catch(function (error) {
-          console.log(error);
-          res.status(500).end();
-        });
+        projectsForTree.push(prepareItemForTree(
+          project.links.self.href,
+          project.attributes.name,
+          projectType,
+          true
+        ));
+      });
+      res.json(projectsForTree);
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.status(500).end();
+    });
 }
 
 
 
 function getHubs(tokenSession, res) {
-   // # stands for ROOT
-    var hubs = new forgeSDK.HubsApi();
+  // # stands for ROOT
+  var hubs = new forgeSDK.HubsApi();
 
-    hubs.getHubs({}, tokenSession.getInternalOAuth(), tokenSession.getInternalCredentials())
-      .then(function (data) {
+  hubs.getHubs({}, tokenSession.getInternalOAuth(), tokenSession.getInternalCredentials())
+    .then(function (data) {
       var hubsForTree = [];
       data.body.data.forEach(function (hub) {
         var hubType;
@@ -206,7 +210,7 @@ function getVersions(projectId, itemId, tokenSession, res) {
 
 
 function prepareItemForTree(_id, _text, _type, _children, _fileType, _fileName) {
-  return { id: _id, text: _text, type: _type, children: _children, fileType:_fileType, fileName: _fileName };
+  return { id: _id, text: _text, type: _type, children: _children, fileType: _fileType, fileName: _fileName };
 }
 
 /*
@@ -300,7 +304,7 @@ function prepareArrayForJSTree(listOf, canHaveChildren, data) {
       id: item.links.self.href,
       data: (item.relationships != null && item.relationships.derivatives != null ?
         item.relationships.derivatives.data.id : null),
-      text: (item.type==='versions' ? szDate : item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName),
+      text: (item.type === 'versions' ? szDate : item.attributes.displayName == null ? item.attributes.name : item.attributes.displayName),
       type: item.type,
       children: canHaveChildren
     };

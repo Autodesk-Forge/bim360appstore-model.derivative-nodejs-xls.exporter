@@ -16,60 +16,72 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 
-
-// This script file is based on the tutorial:
-// https://developer.autodesk.com/en/docs/viewer/v2/tutorials/basic-application/
-
-var viewerApp;
 var fileName;
 var fileType;
-var options = {};
-var token = '';
 var documentId;
 
 
-function launchViewer(urn, name, ftype) {
-  options = {
-    env: 'AutodeskProduction',
-    getAccessToken: getForgeToken,
-    api: 'derivativeV2' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? '_EU' : '')
-  };
-  fileName = name;
-  fileType = ftype;
-  documentId = urn;
-  Autodesk.Viewing.Initializer(options, function onInitialized() {
-    viewerApp = new Autodesk.Viewing.ViewingApplication('forgeViewer');
-    viewerApp.registerViewer(viewerApp.k3D, Autodesk.Viewing.Private.GuiViewer3D);
-    viewerApp.loadDocument("urn:" + urn, onDocumentLoadSuccess, onDocumentLoadFailure);
-  });
+$(document).ready(function () {
+  // in case we want to load this app with a model pre-loaded
+  var urn = getParameterByName('urn');
+  if (urn !== null && urn !== '')
+    launchViewer(urn);
+});
+
+function getParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
 var viewer;
 
-function onDocumentLoadSuccess(doc) {
+// @urn the model to show
+// @viewablesId which viewables to show, applies to BIM 360 Plans folder
+function launchViewer(urn, viewableId,name,type) {
+  var options = {
+    env: 'AutodeskProduction',
+    getAccessToken: getForgeToken,
+    api: 'derivativeV2' + (atob(urn.replace('_', '/')).indexOf('emea') > -1 ? '_EU' : '') // handle BIM 360 US and EU regions
+  };
 
-  // We could still make use of Document.getSubItemsWithProperties()
-  // However, when using a ViewingApplication, we have access to the **bubble** attribute,
-  // which references the root node of a graph that wraps each object from the Manifest JSON.
-  var viewables = viewerApp.bubble.search({ 'type': 'geometry' });
-  if (viewables.length === 0) {
-    console.error('Document contains no viewables.');
-    return;
+  fileName=name
+  fileType = type
+  documentId=urn
+
+  Autodesk.Viewing.Initializer(options, () => {
+    const config = {
+      extensions: ['Autodesk.VisualClusters', 'Autodesk.DocumentBrowser']
+    };
+
+    viewer = new Autodesk.Viewing.GuiViewer3D(document.getElementById('forgeViewer'), config);
+    viewer.start();
+    var documentId = 'urn:' + urn;
+    Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
+
+    // smooth navigation...
+    viewer.autocam.shotParams.destinationPercent = 3;
+    viewer.autocam.shotParams.duration = 3;
+  });
+
+  function onDocumentLoadSuccess(doc) {
+    // if a viewableId was specified, load that view, otherwise the default view
+    var viewables = (viewableId ? doc.getRoot().findByGuid(viewableId) : doc.getRoot().getDefaultGeometry());
+    viewer.loadDocumentNode(doc, viewables).then(i => {
+      // any additional action here?
+      viewer.loadExtension('Autodesk.Sample.XLSExtension');  
+    });
+
   }
 
-  // Choose any of the avialble viewables
-  viewerApp.selectItem(viewables[0].data, onItemLoadSuccess, onItemLoadFail);
-
+  function onDocumentLoadFailure(viewerErrorCode) {
+    console.error('onDocumentLoadFailure() - errorCode:' + viewerErrorCode);
+  }
 }
-
-function onDocumentLoadFailure(viewerErrorCode) {}
-
-function onItemLoadSuccess(_viewer, item) {
-  viewer = _viewer;
-  viewer.loadExtension('Autodesk.Sample.XLSExtension');  
-}
-
-function onItemLoadFail(errorCode) {}
 
 function getForgeToken() {
   jQuery.ajax({
