@@ -88,6 +88,9 @@ function prepareDataManagementTree() {
       'a360projects': {
         'icon': '/img/a360project.png'
       },
+      'accprojects':{
+        'icon': '/img/accproject.svg'
+      },
       'items': {
         'icon': 'glyphicon glyphicon-file'
       },
@@ -101,21 +104,17 @@ function prepareDataManagementTree() {
     "plugins": 
       ["types", "state", "sort"]
   }).bind("activate_node.jstree", function (evt, data) {
-    if (!data || !data.node) return;
-    if (data.node.type == 'items')
-      data.node = $('#dataManagementHubs').jstree(true).get_node(data.node.children[0]);
 
-    if (data.node.type == 'versions') {
-      if (data.node.id === 'not_available') { alert('No viewable available for this version'); return; }
+     var filename = $('#dataManagementHubs').jstree(true).get_node(data.node.parent).text;
+     var fileType = data.node.original.fileType;
 
-      var urn = data.node.id;
-      var filename = $('#dataManagementHubs').jstree(true).get_node(data.node.parent).text;
-      var fileType = data.node.original.fileType;
-
-      if (fileType == null || urn == null || previousUrn == urn) return;
-      launchViewer(urn, filename, fileType);
-      previousUrn = urn;
-      $.notify("loading... " + filename, { className: "info", position:"bottom right" });
+     if (data.node.id.indexOf('|') > -1) {
+      var urn = data.node.id.split('|')[1];
+      var viewableId = data.node.id.split('|')[2];
+      launchViewer(urn, viewableId,filename,fileType);
+    }
+    else {
+      launchViewer(data.node.id,null,filename,fileType);
     }
   });;
 }
