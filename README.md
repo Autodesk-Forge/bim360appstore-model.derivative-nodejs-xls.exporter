@@ -1,18 +1,31 @@
-# Export to Excel
+# Export to Excel with Model Element Data
 
-[![OAuth2](https://img.shields.io/badge/OAuth2-v1-green.svg)](http://developer.autodesk.com/)
-[![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
-[![Viewer](https://img.shields.io/badge/Viewer-v2.17-green.svg)](http://developer.autodesk.com/)
+![Platforms](https://img.shields.io/badge/platform-Windows|MacOS-lightgray.svg)
+[![License](http://img.shields.io/:license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
+[![oAuth2](https://img.shields.io/badge/oAuth2-v1-green.svg)](https://forge.autodesk.com/en/docs/oauth/v2/developers_guide/overview/)
+[![Data-Management](https://img.shields.io/badge/Data%20Management-v1-green.svg)](https://forge.autodesk.com/api/data-management-cover-page/)
+[![Model-Derivative](https://img.shields.io/badge/Model%20Derivative-v2-red.svg)](https://forge.autodesk.com/api/model-derivative-cover-page/)
+[![Viewer](https://img.shields.io/badge/Viewer-v7-blue.svg)](https://forge.autodesk.com/api/viewer-cover-page/)
+
+### Thumbnail
+
+![thumbnail](/DataToExcel.png)
+
+### Demo Video
 ![thumbnail](/thumbnail.gif)
 
 # Description
 
-This sample application demonstrates how to extract Revit data on your BIM360 account, into an excel spreadsheet.  The sample code demonstates 3-legged OAuth to BIM360, a simple viewer extension and code to handle Revit meta-data and format it into an excel spreadsheet file.
+This sample application demonstrates how to extract metadata of model on your Autodesk360, BIM360 or Autodesk Construction Cloud(ACC) account, into an excel spreadsheet.  The sample code demonstates 3-legged OAuth, a simple viewer extension and code to handle  meta-data and format it into an excel spreadsheet file.
+
+In the project tree of this sample, Autodesk360, BIM360 and ACC project are listed with different icons.
+
+   <p align="center"><img src="/project_icon.png" width="200" ></p> 
 
 ### Live version
 
-[https://bim360xls.autodesk.io](https://bim360xls.autodesk.io/)
+[https://forge-exportxls.autodesk.io](https://forge-exportxls.autodesk.io/)
 
 Video: [Youtube](https://youtu.be/800d2xmQl0s)
 
@@ -26,7 +39,7 @@ Install [NodeJS](https://nodejs.org).
 
 Clone this project or download it. It's recommended to install [GitHub desktop](https://desktop.github.com/). To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
 
-    git clone https://github.com/wallabyway/bim360appstore-xls-exporter
+    git clone https://github.com/Autodesk-Forge/forge-exportxls
 
 To run it, install the required packages, set the enviroment variables with your client ID & secret and finally start it. Via command line, navigate to the folder where this repository was cloned and use the following:
 
@@ -74,15 +87,21 @@ Which executes **nodemon server.js --ignore www/**, where the **--ignore** param
 
 ## Troubleshooting
 
-After installing Github desktop for Windows, on the Git Shell, if you see a ***error setting certificate verify locations*** error, use the following:
+1. **getProperties does not return data**: In default, [Get Properties endpoint](https://forge.autodesk.com/en/docs/model-derivative/v2/reference/http/urn-metadata-guid-properties-GET/) can only respond with data if the resource < 20M. A query param **forceget** forces get the large resource even if it exceeded the expected maximum length (20 MB). 
 
-    git config --global http.sslverify "false"
+2. **Cannot see my BIM 360 or ACC projects**: Make sure to provision the Forge App Client ID within the BIM 360 or ACC Account, [learn more here](https://forge.autodesk.com/blog/bim-360-docs-provisioning-forge-apps). This requires the Account Admin permission.
+
+3. **Cannot load Autodesk360 model**: In Autodesk360, the model is not translated by default until the end user loads the model one time in Autodesk360, or the developer posts job to translate. 
+
+4. **error setting certificate verify locations** error: may happen on Windows, use the following: `git config --global http.sslverify "false"`
 
 
-### Thumbnail
+## Blogs
 
-![thumbnail](/BIM360DataToExcel.png)
-
+- [Forge Blog](https://forge.autodesk.com/categories/bim-360-api)
+- [Field of View](https://fieldofviewblog.wordpress.com/), a BIM focused blog
+- [Autodesk Construction Cloud Unified Products: Does it Affect My Application?](https://forge.autodesk.com/blog/autodesk-construction-cloud-unified-products-does-it-affect-my-application)
+- [Autodesk Build and Other Autodesk Construction Cloud Unified Products Launch](https://forge.autodesk.com/blog/autodesk-build-and-other-autodesk-construction-cloud-unified-products-launch)
 
 # License
 
@@ -91,4 +110,4 @@ Please see the [LICENSE](LICENSE) file for full details.
 
 ## Written by
 
-Forge Partner Development
+Developer Advocate and Support, Autodesk
