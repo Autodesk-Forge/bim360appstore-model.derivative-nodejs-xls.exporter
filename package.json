@@ -11,7 +11,7 @@
     "forge-apis": "0.4.3",
     "jquery": "^3.5.1",
     "jstree": "3.3.7",
-    "moment": "2.22.2",
+    "moment": "2.29.4",
     "request": "^2.81.0"
   },
   "repository": {
