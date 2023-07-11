@@ -111,9 +111,11 @@ function prepareDataManagementTree() {
      if (data.node.id.indexOf('|') > -1) {
       var urn = data.node.id.split('|')[1];
       var viewableId = data.node.id.split('|')[2];
+       console.log(urn);
       launchViewer(urn, viewableId,filename,fileType);
     }
     else {
+      console.log(data.node.id);
       launchViewer(data.node.id,null,filename,fileType);
     }
   });;
